@@ -1,2 +1,0 @@
-# tests_auto
-test
