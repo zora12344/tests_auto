@@ -1,0 +1,23 @@
+= GDPR complience document
+
+Our entire application is GDPR complient.
+
+You have the right to update, delete, or export all of your data on our services.
+
+We do collect and store the minimal information we need about our users to be able to provide our services.
+We are an UE company based in France.
+
+We do **not** collect or store any health data.
+
+We ensure the security of your data by applying industry standards.
+
+We do not use any third-pary services.
+
+Children under 16 are not allowed on our platform.
+
+You can contact our DPO at dpo@arosaje.com.
+
+== References
+
+- https://gdpr.eu/[gdpr.eu]
+- https://commission.europa.eu/law/law-topic/data-protection/reform/rules-business-and-organisations_en[European Commission: Rules for business and organisations]

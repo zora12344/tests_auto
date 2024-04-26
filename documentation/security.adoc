@@ -1,0 +1,15 @@
+= Security document
+
+== Database
+
+Minimalist data collection ensures a minimal attack surface of our database. We only collect the information we need to provide the service to our users. See link:gdpr-complience.adoc[our GDPR complience document] to know more about data collection and processing.
+
+== Password hashing
+
+The password given by the user are hashed before beeing stored in the database.
+The hash algorithm used is `sha256` implemented by the `hashlib` python3 library.
+This algorithm was choosen because `md5footnote:[https://en.wikipedia.org/wiki/MD5#Security[md5 security issues]]` and `sha1footnote:[https://en.wikipedia.org/wiki/SHA-1#Attacks[sha1 security issues]]` are "cryptographically broken and unsuitable for further use".
+
+== References
+
+- https://developer.mozilla.org/en-US/docs/Web/Security[Mozilla Web security]

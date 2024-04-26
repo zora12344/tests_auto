@@ -1,0 +1,86 @@
+stages:
+  - lint
+  - build
+  - test
+  - deploy
+
+isort:
+  stage: lint
+  image: python:3.10-alpine3.17
+  script:
+    - cd api
+    - python -m pip install -r requirements.lint.txt
+    - isort --check-only --diff ./app
+
+black:
+  stage: lint
+  needs: ["isort"]
+  image: python:3.10-alpine3.17
+  script:
+    - cd api
+    - python -m pip install -r requirements.lint.txt
+    - black --check --diff ./app
+
+flake8:
+  stage: lint
+  needs: ["black"]
+  image: python:3.10-alpine3.17
+  script:
+    - cd api
+    - python -m pip install -r requirements.lint.txt
+    - flake8 --per-file-ignores="./app/crud/post.py:E711" ./app
+
+pylint: 
+  stage: lint
+  needs: ["black"]
+  image: python:3.10-alpine3.17
+  script:
+    - cd api
+    - python -m pip install -r requirements.lint.txt
+    - pylint ./app/*.py --fail-under=8 --disable=import-error
+
+build: 
+  stage: build
+  image: docker:23
+  services:
+    - docker:23-dind
+  script:
+    - cd api
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
+
+test:
+  stage: test
+  needs: ["build"]
+  image: docker:23
+  variables:
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      STOP_DATABASE_AFTER_TESTS: "true"
+  services:
+    - docker:23-dind
+  script:
+    - cd api
+    - docker compose up mysqldb tests
+
+deploy:
+  stage: deploy
+  needs: ["test"]
+  script:
+    - echo "No deploy step for this project at the moment."
+  only:
+    - main
+
+pages:
+  stage: deploy
+  image: busybox
+  script:
+  - mv api/public public
+  - echo "Deploying pdoc gnerated ducomentation to GitLab Pages"
+  artifacts:
+    paths:
+    - public
+    expire_in: 1 day
+  only:
+    - main

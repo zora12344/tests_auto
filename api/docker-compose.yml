@@ -1,0 +1,37 @@
+services:
+  mysqldb:
+    image: "mysql:8.0.31"
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  api:
+    build: "."
+    depends_on:
+      - mysqldb
+    ports:
+      - "80:80"
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - STOP_DATABASE_AFTER_TESTS=${STOP_DATABASE_AFTER_TESTS:-false}
+    depends_on:
+      - mysqldb
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    volumes:
+      - ./public:/code/public
+    environment:
+      - STOP_DATABASE_AFTER_DOCS=${STOP_DATABASE_AFTER_DOCS:-false}
+    depends_on:
+      - mysqldb
